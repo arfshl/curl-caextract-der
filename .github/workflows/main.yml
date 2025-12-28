@@ -1,0 +1,53 @@
+name: Download and Convert
+
+on:
+  workflow_dispatch: 
+  schedule:
+    - cron: "0 0 1 * *"
+  
+  
+permissions:
+  contents: write
+
+jobs:
+
+  get:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v5
+    - name: Download certificate bundle
+      run: |
+        curl --etag-compare etag.txt --etag-save etag.txt --remote-name https://curl.se/ca/cacert.pem
+    - name: Split certificate bundle
+      run: |
+        csplit -z -f cert- cacert.pem '/-----BEGIN CERTIFICATE-----/' '{*}'
+    - name: Get certificate CAs, Convert to DER binary with .crt format, Name it with CAs instead.
+      run: |
+        for f in cert-*; do
+        openssl x509 -in "$f" -noout >/dev/null 2>&1 || continue
+        CN=$(openssl x509 -in "$f" -noout -subject -nameopt RFC2253 | sed -n 's/.*CN=\([^,]*\).*/\1/p')
+        mv "$f" "${CN}.pem"
+        done
+        for f in *.pem; do
+        openssl x509 -in "$f" -out "${f%}.crt" -outform DER
+        done
+        for f in *.pem.crt; do
+        mv "$f" "${f%.pem.crt}.crt"
+        done
+    - name: Compress to .zip
+      run: |
+        zip cacert.zip *.crt
+    - name: Push to release
+      uses: softprops/action-gh-release@v2
+      with:
+          tag_name: cacert
+          name: CA Certificate
+          files: |
+            cacert.zip
+            cacert.pem
+          preserve_order: true
+          make_latest: true
+env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
