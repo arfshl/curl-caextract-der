@@ -36,9 +36,10 @@ jobs:
         for f in *.pem.crt; do
         mv "$f" "${f%.pem.crt}.crt"
         done
-    - name: Compress to .zip
+    - name: Compress to .zip and .iso
       run: |
         zip cacert.zip *.crt
+        mkisofs -volid "curl-caextract-der" -o cacert.iso *.crt
     - name: Push to release
       uses: softprops/action-gh-release@v2
       with:
@@ -46,6 +47,7 @@ jobs:
           name: CA Certificate
           files: |
             cacert.zip
+            cacert.iso
             cacert.pem
           preserve_order: true
           make_latest: true
