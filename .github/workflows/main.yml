@@ -42,7 +42,7 @@ jobs:
     - name: Install mkisofs and compress to .iso too
       run: |
         sudo apt install -y mkisofs genisoimage xorriso
-        xorriso -as mkisofs -iso-level 3 -J -joliet-long -R -allow-lowercase -V "curl-caextract-der" -o cacert.iso *.crt
+        xorriso -as mkisofs -iso-level 3 -J -joliet-long -R -allow-lowercase -V "CURL_CAEXTRACT_DER" -o cacert.iso *.crt
     - name: Push to release
       uses: softprops/action-gh-release@v2
       with:
