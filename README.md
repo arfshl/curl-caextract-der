@@ -1,3 +1,5 @@
+[![Download and Convert](https://github.com/arfshl/curl-caextract-der/actions/workflows/main.yml/badge.svg)](https://github.com/arfshl/curl-caextract-der/actions/workflows/main.yml)
+
 CA certificates extracted from Mozilla from cURL, Converted from PEM to DER format 
 
 Use this for DER-encoded compatible only environment
