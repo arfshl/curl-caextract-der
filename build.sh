@@ -2,6 +2,9 @@
 
 set -euo
 
+export RELEASE=$(date +"%Y%m%d")
+echo "RELEASE=$RELEASE" >> "$GITHUB_OUTPUT"
+
 # name: Download certificate bundle
 echo "==> Downloading certificate bundle..."
 curl --etag-compare etag.txt --etag-save etag.txt --remote-name https://curl.se/ca/cacert.pem

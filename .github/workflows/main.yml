@@ -18,13 +18,14 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name:  Run script
+    - id: start_build
       run: |
         bash build.sh
     - name: Push to release
       uses: softprops/action-gh-release@v3
       with:
-          tag_name: cacert
-          name: CA Certificate
+          tag_name: ${{ steps.start_build.outputs.RELEASE }}
+          name: ${{ steps.start_build.outputs.RELEASE }}
           files: |
             cacert.zip
             cacert.iso
